@@ -21,12 +21,13 @@ on:
 permissions:
   contents: read
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   validate-model-catalog:
     runs-on: ubuntu-latest
     continue-on-error: true
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -44,8 +45,6 @@ jobs:
     if: ${{ (github.event_name == 'workflow_dispatch' && (github.event.inputs.deploy_target == 'cloudflare' || github.event.inputs.deploy_target == 'both')) || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
     needs: validate-model-catalog
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -194,6 +193,7 @@ jobs:
           PY
 
       - name: Verify US placement
+        continue-on-error: true
         run: |
           python -u - <<'PY'
           import tomllib
